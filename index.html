@@ -1,0 +1,152 @@
+<style>
+  body {
+    text-align: center;
+    background-color: black;
+    color: white;
+    font-family: 'Verdana';
+  }
+
+  #scoreboard {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+</style>
+
+<body>
+  <div id="controls">
+    <table>
+      <tr>
+        <td>
+          <button>start timer</button>
+        </td>
+        <td>
+          <button>stop timer</button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button>left up</button>
+        </td>
+        <td>
+          <button>right up</button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button>left down</button>
+        </td>
+        <td>
+          <button>right down</button>
+        </td>
+      <tr>
+      <tr>
+        <td>
+          <button>reset</button>
+        </td>
+        <td>
+          
+        </td>
+      <tr>
+    </div>
+    <div>
+    </div>
+  </div>
+
+  <div id="scoreboard">
+    Home: <span id="left-score">0</span>
+    Away: <span id="right-score">0</span>
+    Time: <span id="minutes">15</span>:<span id="seconds">00</span>
+  </div>
+</body>
+
+<script>
+  let timer = null;
+  let minutes = 15
+  let seconds = 00
+  let leftScore = 0
+  let rightScore = 0
+
+  let buttonMappings = {
+    "start timer": startTimer,
+    "stop timer": stopTimer,
+    "left up": changeScore,
+    "left down": changeScore,
+    "right up": changeScore,
+    "right down": changeScore,
+    "reset": reset,
+  }
+
+  attachButtonListeners()
+  function attachButtonListeners() {
+    let buttons = document.getElementsByTagName('button')
+    for (let i = 0; i < buttons.length; i++) {
+      let button = buttons[i]
+      button.addEventListener('click', buttonMappings[button.textContent])
+    }
+  }
+
+  function reset() {
+    stopTimer()
+    minutes = 15
+    seconds = 00
+    leftScore = 0
+    rightScore = 0
+  }
+
+
+  function tick() {
+    seconds--
+    if (seconds < 0) {
+      seconds = 59
+      minutes--
+      if (minutes < 0) {
+        stopTimer()
+      }
+    }
+    renderTime()
+  }
+
+  function renderTime() {
+    let minutesEl = document.getElementById('minutes')
+    let secondsEl = document.getElementById('seconds')
+    minutesEl.textContent = minutes
+    if (seconds < 10) {
+      secondsEl.textContent = '0' + seconds
+    } else {
+      secondsEl.textContent = seconds
+    }
+  }
+
+  function startTimer() {
+    stopTimer()
+    let timer = setInterval(tick, 1000)
+  }
+
+  function stopTimer() {
+    clearInterval(timer)
+    timer = null
+  }
+
+  function changeScore(ev) {
+    let action = ev.target.textContent
+    if (action === "left up") {
+      leftScore++
+    } else if (action === "left down") {
+      leftScore--
+    } else if (action === "right up") {
+      rightScore++
+    } else if (action === "right down") {
+      rightScore--
+    }
+    renderScore()
+  }
+
+  function renderScore() {
+    let leftEl = document.getElementById('left-score')
+    let rightEl = document.getElementById('right-score')
+    leftEl.textContent = leftScore
+    rightEl.textContent = rightScore
+  }
+</script>
